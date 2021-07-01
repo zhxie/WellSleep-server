@@ -7,22 +7,23 @@ import sys
 
 def create_users_table():
     cur.execute('''CREATE TABLE IF NOT EXISTS users
-                (id         INT     PRIMARY KEY NOT NULL,
+                (id         INTEGER PRIMARY KEY NOT NULL,
                  nickname   TEXT    NOT NULL)''')
     conn.commit()
 
 
 def create_activities_table():
     cur.execute('''CREATE TABLE IF NOT EXISTS activities
-                (id         INT     NOT NULL,
-                 type       INT     NOT NULL,
-                 time       INT     NOT NULL)''')
+                (id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                 author     INTEGER NOT NULL,
+                 type       INTEGER NOT NULL,
+                 time       INTEGER NOT NULL)''')
 
 
 def create_relation_table():
     cur.execute('''CREATE TABLE IF NOT EXISTS relation
-                (id         INT     NOT NULL,
-                followee    INT     NOT NULL)''')
+                (id         INTEGER NOT NULL,
+                followee    INTEGER NOT NULL)''')
 
 
 conn = sqlite3.connect('main.db')
@@ -85,7 +86,7 @@ def check(id, type):
             try:
                 ts = int(datetime.now().timestamp() * 1000)
 
-                cur.execute('INSERT INTO activities VALUES(' +
+                cur.execute('INSERT INTO activities (author, type, time) VALUES(' +
                             str(id) + ', ' + str(type) + ', ' + str(ts) + ')')
                 conn.commit()
 
@@ -155,9 +156,10 @@ def activities_internal(cur, id, to, limit):
         t = sys.maxsize // 2
 
     ac = []
-    for row in cur.execute('SELECT * FROM activities WHERE id=' +
-                           str(id) + ' AND time<' + str(t) + ' ORDER BY time DESC LIMIT ' + str(limit)).fetchall():
-        ac.append({'type': int(row[1]), 'time': int(row[2])})
+    for row in cur.execute('SELECT * FROM activities WHERE author=' +
+                           str(id) + ' AND id<' + str(t) + ' ORDER BY id DESC LIMIT ' + str(limit)).fetchall():
+        ac.append({'id': int(row[0]), 'type': int(
+            row[2]), 'time': int(row[3])})
 
     ac.sort(key=lambda x: x['time'], reverse=True)
 
@@ -216,10 +218,10 @@ def timeline(id, to, limit):
             ac = []
             for f in fs:
                 for a in activities_internal(cur, f['id'], to, limit)['activities']:
-                    a['id'] = f['id']
+                    a['author'] = f['id']
                     ac.append(a)
             for a in activities_internal(cur, id, to, limit)['activities']:
-                a['id'] = id
+                a['author'] = int(id)
                 ac.append(a)
 
             ac.sort(key=lambda x: x['time'], reverse=True)

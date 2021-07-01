@@ -92,7 +92,7 @@ def is_limit_valid(content):
         if content['limit'] is None:
             return False
         limit = int(content['limit'])
-        if limit < 0:
+        if limit < 1:
             return False
 
         return True
