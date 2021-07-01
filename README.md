@@ -1,6 +1,6 @@
 # WellSleep Server
 
-Wish you a well sleep. This is the server of [WellSleep](https://github.com/zhxie/WellSleep).
+Wish you a well sleep. This is the server for [WellSleep](https://github.com/zhxie/WellSleep).
 
 ## API
 
