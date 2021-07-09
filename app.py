@@ -205,6 +205,7 @@ def user():
         else:
             return {
                 'status': constant.SUCCESS,
+                'id': r['id'],
                 'nickname': r['nickname'],
             }
     else:
@@ -266,6 +267,7 @@ def timeline():
             return {
                 'status': constant.SUCCESS,
                 'timeline': r['timeline'],
+                'id': r['id'],
                 'nickname': r['nickname'],
                 'followers': r['followers']
             }

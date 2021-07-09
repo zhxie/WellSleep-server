@@ -137,6 +137,7 @@ def unfollow(id, followee):
 
 def user_internal(cur, id):
     return {
+        'id': int(id),
         'nickname': cur.execute('SELECT nickname FROM users WHERE id=' + str(id)).fetchone()[0]
     }
 
@@ -228,6 +229,7 @@ def timeline(id, to, limit):
 
             return {
                 'timeline': ac[:min(int(limit), len(ac))],
+                'id': int(id),
                 'nickname': nn,
                 'followers': fs
             }
