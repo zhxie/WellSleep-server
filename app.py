@@ -13,7 +13,7 @@ def is_id_valid(content):
         if content['id'] is None:
             return False
         id = int(content['id'])
-        if id < 1 or id > 999999999:
+        if id < 0 or id > 999999999:
             return False
 
         return True
@@ -60,7 +60,7 @@ def is_followee_valid(content):
         if content['followee'] is None:
             return False
         followee = int(content['followee'])
-        if followee < 1 or followee > 999999999:
+        if followee < 0 or followee > 999999999:
             return False
 
         return True
