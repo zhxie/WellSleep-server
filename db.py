@@ -17,7 +17,8 @@ def create_activities_table():
                 (id         INTEGER PRIMARY KEY AUTOINCREMENT,
                  author     INTEGER NOT NULL,
                  type       INTEGER NOT NULL,
-                 time       INTEGER NOT NULL)''')
+                 time       INTEGER NOT NULL,
+                 weather    INTEGER)''')
 
 
 def create_relation_table():
@@ -79,15 +80,19 @@ def update_profile(id, nickname):
             return constant.ERR_USER_NOT_EXIST
 
 
-def check(id, type):
+def check(id, type, weather):
     with sqlite3.connect('main.db') as conn:
         cur = conn.cursor()
         if exist(cur, id):
             try:
                 ts = int(datetime.now().timestamp() * 1000)
 
-                cur.execute('INSERT INTO activities (author, type, time) VALUES(' +
-                            str(id) + ', ' + str(type) + ', ' + str(ts) + ')')
+                if weather is None:
+                    cur.execute('INSERT INTO activities (author, type, time) VALUES(' +
+                                str(id) + ', ' + str(type) + ', ' + str(ts) + ')')
+                else:
+                    cur.execute('INSERT INTO activities (author, type, time, weather) VALUES(' +
+                                str(id) + ', ' + str(type) + ', ' + str(ts) + ', ' + str(weather) + ')')
                 conn.commit()
 
                 return ts
@@ -160,7 +165,7 @@ def activities_internal(cur, id, to, limit):
     for row in cur.execute('SELECT * FROM activities WHERE author=' +
                            str(id) + ' AND id<' + str(t) + ' ORDER BY id DESC LIMIT ' + str(limit)).fetchall():
         ac.append({'id': int(row[0]), 'type': int(
-            row[2]), 'time': int(row[3])})
+            row[2]), 'time': int(row[3]), 'weather': None if row[4] is None else int(row[4])})
 
     ac.sort(key=lambda x: x['time'], reverse=True)
 

@@ -137,7 +137,8 @@ def update_profile():
 def check():
     content = request.get_json()
     if is_id_valid(content) and is_type_valid(content):
-        ts = db.check(content['id'], content['type'])
+        ts = db.check(content['id'], content['type'],
+                      content['weather'] if 'weather' in content else None)
         if ts < 0:
             return {
                 'status': ts
